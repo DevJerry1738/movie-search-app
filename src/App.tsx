@@ -7,6 +7,7 @@ export default function App() {
   const [query, setQuery] = useState("");// State for the search query
   // State for the list of movies, loading state, and error message
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [totalResults, setTotalResults] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -21,6 +22,7 @@ export default function App() {
       // If the response is successful, set the movies state
       if (data.Response === "True") {
         setMovies(data.Search);
+        setTotalResults(parseInt(data.totalResults, 10));
       } else {// If the response indicates an error, set the error state
         setError(data.Error || "No results found.");
         setMovies([]);
@@ -48,6 +50,11 @@ export default function App() {
 
       {loading && <p>Loading...</p>}
       {error && <p className="error">{error}</p>}
+      {totalResults > 0 && (
+        <p className="results-count">
+          Found {totalResults} {totalResults === 1 ? "result" : "results"} for "{query}"
+        </p>
+      )}
       <div className="movie-grid">
         {movies.map((movie) => (
           <MovieCard key={movie.imdbID} movie={movie} />
